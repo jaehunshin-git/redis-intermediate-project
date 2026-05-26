@@ -24,4 +24,14 @@ public class SearchController {
     public List<String> getTop10Keywords() {
         return searchService.getTop10Keywords();
     }
+
+    @GetMapping("/redis")
+    public void searchWithRedis(@RequestParam String keyword) {
+        searchService.searchWithRedis(keyword);
+    }
+
+    @GetMapping("/top10/redis")
+    public List<String> geteTop10KeywordsWithRedis() {
+        return searchService.getTop10KeywordsWithRedis();
+    }
 }
