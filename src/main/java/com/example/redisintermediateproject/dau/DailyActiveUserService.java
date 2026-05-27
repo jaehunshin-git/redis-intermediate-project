@@ -2,6 +2,7 @@ package com.example.redisintermediateproject.dau;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -35,13 +36,21 @@ public class DailyActiveUserService {
     String key = "dau:" + today.toString();
 
     // SADD [key] [value]
-    redisTemplate.opsForSet().add(key, userId.toString());
+//    redisTemplate.opsForSet().add(key, userId.toString());
+
+    // SETBIT [key] [offset] [value]
+    redisTemplate.opsForValue().setBit(key, userId, true);
   }
 
   public Long getDauWithRedis(LocalDate date) {
     String key = "dau:" + date.toString();
 
     // SCARD [key]
-    return redisTemplate.opsForSet().size(key);
+//    return redisTemplate.opsForSet().size(key);
+
+    // BITCOUNT [key]
+    return redisTemplate.execute(
+            (RedisCallback<Long>) (connection) -> connection.bitCount(key.getBytes())
+    );
   }
 }
