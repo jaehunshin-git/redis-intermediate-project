@@ -2,6 +2,8 @@ package com.example.redisintermediateproject.dau;
 
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DailyActiveUserService {
 
   private final DailyActiveUserRepository dailyActiveUserRepository;
+  private final RedisTemplate<String, String> redisTemplate;
 
   @Transactional
   public void recordActiveUser(Long userId) {
@@ -25,5 +28,20 @@ public class DailyActiveUserService {
   public long getDau(LocalDate date) {
     // 특정 날짜의 DAU를 SQL문의 COUNT를 활용해 계산
     return dailyActiveUserRepository.countByActiveDate(date);
+  }
+
+  public void recordActiveUserWithRedis(Long userId) {
+    LocalDate today = LocalDate.now();
+    String key = "dau:" + today.toString();
+
+    // SADD [key] [value]
+    redisTemplate.opsForSet().add(key, userId.toString());
+  }
+
+  public Long getDauWithRedis(LocalDate date) {
+    String key = "dau:" + date.toString();
+
+    // SCARD [key]
+    return redisTemplate.opsForSet().size(key);
   }
 }

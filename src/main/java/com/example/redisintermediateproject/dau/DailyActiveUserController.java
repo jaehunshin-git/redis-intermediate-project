@@ -20,7 +20,7 @@ public class DailyActiveUserController {
   // 활동 유저 기록 API
   @PostMapping("/record")
   public void recordActiveUser(
-      @RequestBody RecordActiveUserRequestDto recordActiveUserRequestDto
+          @RequestBody RecordActiveUserRequestDto recordActiveUserRequestDto
   ) {
     dailyActiveUserService.recordActiveUser(recordActiveUserRequestDto.getUserId());
   }
@@ -28,10 +28,28 @@ public class DailyActiveUserController {
   // DAU 조회 API
   @GetMapping("/count")
   public long getDau(
-      @RequestParam
-      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-      LocalDate date
+          @RequestParam
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate date
   ) {
     return dailyActiveUserService.getDau(date);
+  }
+
+  // DAU 기록 API With Redis
+  @PostMapping("/record/redis")
+  public void recordActiveUserWithRedis(
+          @RequestBody RecordActiveUserRequestDto recordActiveUserRequestDto
+  ) {
+    dailyActiveUserService.recordActiveUserWithRedis(recordActiveUserRequestDto.getUserId());
+  }
+
+  // DAU 조회 API With Redis
+  @GetMapping("/count/redis")
+  public long getDauWithRedis(
+          @RequestParam
+          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+          LocalDate date
+  ) {
+    return dailyActiveUserService.getDauWithRedis(date);
   }
 }
